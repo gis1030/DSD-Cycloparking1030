@@ -9,8 +9,8 @@
 | Tool | Description | Link |
 |---|---|---|
 | 🏠 **Home page** | Project portal | [gis1030.github.io/RH-Agents1030](https://gis1030.github.io/DSD-Cycloparking1030/) |
-| 🗺️ **Cartography** | Interactive map — facilities, demand density, individual requests | [indexFR.html](indexFR.html) |
-| 📊 **Dashboard** | Demand table — filters, sorting, CSV export | [cycloparkin1030_demandes.html](cycloparkin1030_demandes.html) |
+| 🗺️ **Cartography** | Interactive map — facilities, demand density, individual requests | https://gis1030.github.io/DSD-Cycloparking1030/indexFR.html) |
+| 📊 **Dashboard** | Demand table — filters, sorting, CSV export | [cycloparkin1030_demandes.html](https://gis1030.github.io/DSD-Cycloparking1030/cycloparkin1030_demandes.html) |
 
 ---
 
