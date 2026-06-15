@@ -1,0 +1,511 @@
+/* ═══════════════════════════════════════════════════════════════
+   GIS1030 · SAC 2024 · Feuille de styles unifiée
+   Couvre : SAC2024_Charts1030_Contrevenant.html
+            SAC2024_Charts1030_Infractions.html
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── VARIABLES ──────────────────────────────────────────────── */
+:root{
+  --bg:#0b1929;--card:#0f2337;--card2:#142b42;
+  --border:#1e3a52;--p1:#00537e;--p2:#00a8cc;
+  --grad:linear-gradient(135deg,#00537e,#00a8cc);
+  --green:#22c55e;--red:#ef4444;--orange:#f97316;
+  --yellow:#eab308;--teal:#00bcd4;--pink:#ec4899;
+  --t1:#e8f4f8;--t2:#7aa8c0;--t3:#3d6a82;
+  --sb-w:265px;--sb-col:54px;--hdr:80px;--tr:0.3s ease;
+}
+body.light{
+  --bg:#f4f8fb;--card:#ffffff;--card2:#e8f2f7;
+  --border:#c5dde8;--t1:#0b1929;--t2:#3d6a82;--t3:#7aa8c0;
+  --p1:#00537e;--p2:#0098b4;
+}
+
+/* ── BASE ───────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;transition:background var(--tr),color var(--tr)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#1e3a52;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--p1)}
+
+/* ── APP WRAPPER ────────────────────────────────────────────── */
+#app{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+#sidebar{
+  position:fixed;top:0;left:0;height:100vh;width:var(--sb-w);
+  background:var(--card);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;transition:width var(--tr);
+  z-index:100;overflow:hidden;
+}
+/* Contrevenant: .collapsed — Infraction: .col */
+#sidebar.collapsed,#sidebar.col{width:var(--sb-col)}
+#sidebar.collapsed .sb-body,#sidebar.col .sbc{opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--tr),visibility var(--tr)}
+#sidebar.collapsed .logo-txt,#sidebar.col .logo-txt{display:none}
+#sidebar.collapsed .sb-btns{max-height:0;overflow:hidden;opacity:0;padding:0;pointer-events:none}
+#sidebar.collapsed .sbh,#sidebar.col .sbh{justify-content:space-between;padding:0 8px}
+#sidebar.collapsed #sbToggle,#sidebar.col .tbtn{color:var(--p1);background:rgba(0,83,126,.12);border-radius:8px;width:40px;height:40px}
+
+/* ── SIDEBAR HEADER ─────────────────────────────────────────── */
+.sbh{display:flex;align-items:center;justify-content:space-between;padding:0 14px;height:var(--hdr);border-bottom:1px solid var(--border);flex-shrink:0;background:var(--card);position:sticky;top:0;z-index:2}
+.logo-area{display:flex;align-items:center;gap:10px;overflow:hidden}
+.logo-icon{height:38px;width:auto;flex-shrink:0}
+.logo-txt{font-size:1rem;font-weight:700;font-family:'Lexend Deca',sans-serif;color:var(--p1);white-space:nowrap}
+
+/* Toggle: #sbToggle (Contrevenant) · .tbtn (Infraction) */
+#sbToggle,.tbtn{background:none;border:none;cursor:pointer;color:var(--t2);font-size:1.2rem;padding:6px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color .2s,background .2s;width:32px;height:32px}
+#sbToggle:hover,.tbtn:hover{color:var(--p1);background:rgba(0,83,126,.15)}
+
+/* ── SIDEBAR BODY ───────────────────────────────────────────── */
+/* .sb-body (Contrevenant) · .sbc (Infraction) */
+.sb-body,.sbc{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 14px}
+
+/* Filter sections: .fls (Infraction) · aside .sbf (Contrevenant) */
+.fls{margin-bottom:20px}
+aside#sidebar .sbf{margin-bottom:20px}
+
+/* Sidebar footer buttons: nav .sbf (Infraction only) */
+nav#sidebar .sbf{padding:14px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:8px;max-height:200px;overflow:hidden;transition:max-height var(--tr),opacity var(--tr),padding var(--tr)}
+nav#sidebar.col .sbf{max-height:0;overflow:hidden;opacity:0;pointer-events:none;padding:0}
+
+/* Filter labels: .sbf-label (Contrevenant) · .fll (Infraction) */
+.sbf-label,.fll{font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--p1);margin-bottom:8px;display:block;font-family:'Lexend Deca',sans-serif}
+.sbf-sep{border:none;border-top:1px solid var(--border);margin:8px 0}
+
+/* Checkboxes/radios: .cb-row (Contrevenant) · .cbi (Infraction) */
+.cb-row,.cbi{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.8rem;color:var(--t2);margin-bottom:4px}
+.cb-row:hover,.cbi:hover{color:var(--t1)}
+.cb-row input[type=checkbox],.cbi input[type=checkbox]{width:14px;height:14px;accent-color:var(--p1);cursor:pointer}
+.cb-row input[type=radio]{width:14px;height:14px;accent-color:var(--p1);cursor:pointer}
+.cbg{display:flex;flex-direction:column;gap:6px}
+
+/* Range sliders */
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:2px;background:var(--border);outline:none;cursor:pointer;width:100%;accent-color:var(--p1)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--p1);cursor:pointer;box-shadow:0 0 0 3px rgba(0,83,126,.25)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--p1);cursor:pointer;border:none}
+.range-wrap{padding:4px 0 8px}
+.range-vals{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--t2);margin-bottom:4px}
+.slr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.slr label{font-size:.75rem;color:var(--t2);white-space:nowrap;min-width:36px}
+.rl{display:flex;justify-content:space-between;font-size:.7rem;color:var(--t3);margin-top:2px}
+.rv{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--p1);min-width:20px;text-align:right}
+
+/* Selects (Contrevenant) — même aspect que .mst (Infraction) */
+select#locSearch,select#quartierFilter{
+  width:100%;padding:7px 10px;
+  background-color:var(--card2);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237aa8c0'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+  border:1px solid var(--border);border-radius:7px;
+  color:var(--t1);font-size:.8rem;font-family:'Inter',sans-serif;
+  cursor:pointer;outline:none;
+  -webkit-appearance:none;appearance:none;
+}
+select#locSearch:focus,select#quartierFilter:focus{border-color:var(--p1)}
+select#locSearch:hover,select#quartierFilter:hover{border-color:var(--p1)}
+
+/* Multiselect dropdown (Infraction) */
+.msd{position:relative}
+.mst{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:.8rem;color:var(--t1);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:'Inter',sans-serif}
+.mst:hover{border-color:var(--p1)}
+.msdp{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--card2);border:1px solid var(--border);border-radius:7px;z-index:200;max-height:180px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.msdp.open{display:block}
+.mso{padding:8px 12px;font-size:.8rem;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--t2);transition:background .15s}
+.mso:hover{background:rgba(0,83,126,.1);color:var(--t1)}
+.mso.sel{color:var(--p1)}
+.mso input[type=checkbox]{accent-color:var(--p1);width:13px;height:13px}
+
+/* Toggle buttons (Infraction) */
+.tgg{display:flex;gap:4px;flex-wrap:wrap}
+.tgb{background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:.75rem;color:var(--t2);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.tgb:hover{color:var(--t1);border-color:var(--t2)}
+.tgb.act{background:rgba(0,83,126,.18);border-color:var(--p1);color:var(--p1);font-weight:600}
+
+/* Chips: #chips (Contrevenant) · .chips (Infraction) */
+#chips,.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;min-height:0}
+.chip{display:inline-flex;align-items:center;gap:5px;background:rgba(0,83,126,.14);border:1px solid rgba(0,83,126,.35);border-radius:20px;padding:3px 10px 3px 8px;font-size:.72rem;color:var(--p1);cursor:pointer}
+.chip:hover{background:rgba(0,83,126,.22)}
+.chip .rm{cursor:pointer;font-size:.85rem;line-height:1;color:var(--p1);opacity:.7}
+.chip .rm:hover{opacity:1}
+
+/* Sidebar buttons (Contrevenant) */
+.sb-btns{padding:14px;border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:8px;transition:max-height var(--tr),opacity var(--tr),padding var(--tr)}
+.sb-btn{width:100%;padding:9px;border-radius:8px;font-size:.8rem;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600;transition:all .2s;border:none}
+.sb-btn:not(.primary){background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.sb-btn:not(.primary):hover{background:rgba(239,68,68,.2)}
+.sb-btn.primary{background:var(--grad);color:#fff}
+.sb-btn.primary:hover{opacity:.9;transform:translateY(-1px)}
+
+/* Navigation link button (shared) */
+.bnav{display:block;width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:.8rem;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600;transition:all .2s;text-align:center;text-decoration:none;color:var(--t2);background:var(--card2)}
+.bnav:hover{border-color:var(--p2);color:var(--p2);background:rgba(0,168,204,.08)}
+
+/* Reset/export buttons (Infraction) */
+.brst,.bexp{width:100%;padding:9px;border:none;border-radius:8px;font-size:.8rem;font-family:'Inter',sans-serif;cursor:pointer;font-weight:600;transition:all .2s}
+.brst{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.brst:hover{background:rgba(239,68,68,.2)}
+.bexp{background:var(--grad);color:#fff}
+.bexp:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ── MAIN ───────────────────────────────────────────────────── */
+#main{margin-left:var(--sb-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left var(--tr)}
+#main.sc{margin-left:var(--sb-col)}
+
+/* ── HEADER ─────────────────────────────────────────────────── */
+#hdr{position:sticky;top:0;z-index:50;height:var(--hdr);background:var(--card);border-bottom:2px solid var(--p1);display:flex;align-items:center;justify-content:space-between;padding:0 28px;backdrop-filter:blur(10px)}
+
+/* Contrevenant header classes */
+.hdr-left,.hdl{display:flex;align-items:center;gap:18px}
+.hdr-logo{height:52px;width:auto}
+.hdr-title,.hdt{font-size:1.25rem;font-weight:700;color:var(--p1);font-family:'Lexend Deca',sans-serif;letter-spacing:-.01em}
+.hdr-sub,.hds{font-size:.78rem;color:var(--t2);font-family:'Inter',sans-serif}
+.hdr-right,.hdr2{display:flex;align-items:center;gap:12px}
+.hdtt{display:flex;flex-direction:column;gap:2px}
+
+/* Badge: #badge (Contrevenant) · #rbdg (Infraction) */
+#badge,#rbdg,#hdrBadge{background:rgba(0,83,126,.14);border:1px solid rgba(0,83,126,.3);border-radius:20px;padding:4px 12px;font-size:.78rem;font-family:'DM Mono',monospace;color:var(--p2);white-space:nowrap}
+
+/* Theme button: #themeBtn (Contrevenant) · .thbtn (Infraction) */
+#themeBtn,.thbtn{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:.85rem;cursor:pointer;color:var(--t1);transition:all .2s}
+#themeBtn:hover,.thbtn:hover{border-color:var(--p1)}
+
+/* ── CONTENT ────────────────────────────────────────────────── */
+/* #content (Contrevenant) · #cnt (Infraction) */
+#content,#cnt{padding:24px 28px;flex:1}
+#content{display:flex;flex-direction:column;gap:16px}
+
+/* ── KPI ────────────────────────────────────────────────────── */
+.kg{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:6px}
+.knote{font-size:.72rem;color:var(--t3);margin:0 0 4px 2px;font-family:'Inter',sans-serif}
+.kc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px;position:relative;overflow:hidden;cursor:default;transition:transform .2s,box-shadow .2s}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.kc:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.kc.pop{animation:kpop .3s ease}
+@keyframes kpop{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+.kc-top,.ktop{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.kbdgs{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.kico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.kico.tl,.kico.bl{background:rgba(27,174,161,.15)}
+.kico.pk,.kico.pu{background:rgba(227,37,107,.12)}
+.kico.gr{background:rgba(162,196,38,.12)}
+.kico.yw,.kico.tl2{background:rgba(253,194,0,.12)}
+.kico.or{background:rgba(238,121,55,.12)}
+.kico.rs{background:rgba(207,122,135,.12)}
+.kbdg{font-size:.7rem;font-weight:600;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:3px;font-family:'DM Mono',monospace;cursor:help}
+.kbdg.up{background:rgba(34,197,94,.12);color:var(--green)}
+.kbdg.dn{background:rgba(239,68,68,.12);color:var(--red)}
+.kbdg.nu{background:rgba(122,168,192,.12);color:var(--t2)}
+.kc-val,.kval{font-size:1.35rem;font-weight:700;font-family:'DM Mono',monospace;color:var(--t1);line-height:1.1}
+.kc-label,.klbl{font-size:.75rem;color:var(--t2);margin-top:4px;font-family:'Lexend Deca',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+
+/* ── SECTION HEADER (Contrevenant) ─────────────────────────── */
+.section-hdr{padding:10px 18px;background:var(--p1);border-radius:10px;color:#fff;font-family:'Lexend Deca',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.03em}
+
+/* ── GRIDS ──────────────────────────────────────────────────── */
+/* Contrevenant grid system */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid-1-2{display:grid;grid-template-columns:1fr 2fr;gap:14px}
+.grid-1-2-1{display:grid;grid-template-columns:1fr 2fr 1fr;gap:14px}
+@media(max-width:900px){.grid-1-2{grid-template-columns:1fr}}
+@media(max-width:1100px){.grid-1-2-1{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+@media(max-width:1100px){.grid3{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.grid-1-2-1,.grid3{grid-template-columns:1fr}}
+
+/* Infraction grid system */
+.cr{display:grid;gap:24px;margin-bottom:24px}
+.cr.c2{grid-template-columns:1fr 1fr}
+.cr.c3{grid-template-columns:1fr 1fr 1fr}
+
+/* ── CARDS ──────────────────────────────────────────────────── */
+.card,.cc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.cc{margin-bottom:24px}
+.card-hdr,.ch{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ch{margin-bottom:16px}
+.card-title,.ctit{font-size:1.1rem;font-weight:700;color:var(--p1);font-family:'Lexend Deca',sans-serif;letter-spacing:-.01em}
+.card-sub{font-size:.75rem;color:var(--t3)}
+.chr{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dl-btn,.dlb{background:rgba(0,83,126,.12);border:1px solid rgba(0,83,126,.25);border-radius:8px;padding:5px 10px;font-size:.75rem;color:var(--p2);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.dl-btn:hover,.dlb:hover{background:rgba(0,83,126,.22)}
+
+/* ── CHARTS ─────────────────────────────────────────────────── */
+.chart-wrap{position:relative;flex:none}
+.donut-wrap{width:100%;height:225px;position:relative}
+#cnt canvas,#content canvas{width:100%!important}
+#cnt #g9,#cnt #g10,#content #g9,#content #g10{height:420px!important}
+
+/* ── PILLS ──────────────────────────────────────────────────── */
+.pill-row,.pls{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.pill,.pll{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:.75rem;color:var(--t2);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.pill:hover,.pll:hover{color:var(--t1)}
+.pill.active,.pll.act{background:rgba(0,83,126,.18);border-color:var(--p1);color:var(--p1);font-weight:600}
+
+/* ── HEATMAP — Contrevenant ─────────────────────────────────── */
+.heatmap-tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.heatmap-tbl th{font-family:'Lexend Deca',sans-serif;font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;padding:6px 10px;text-align:center;border-bottom:1px solid var(--border)}
+.heatmap-tbl td{padding:0}
+.hm-label{padding:6px 12px 6px 4px;color:var(--t2);font-size:.8rem;white-space:nowrap}
+.hm-cell{padding:8px 12px;text-align:center;cursor:default;transition:opacity .2s;border:1px solid var(--card);border-radius:4px}
+.hm-cell:hover{opacity:.85;transform:scale(1.02)}
+.hm-val{display:block;font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500}
+.hm-cnt{display:block;font-size:.68rem;opacity:.7}
+
+/* ── HEATMAP GRID — Infraction ──────────────────────────────── */
+#hmg{display:grid;grid-template-columns:52px repeat(12,1fr);gap:3px}
+.hmc{border-radius:5px;padding:5px 2px;text-align:center;font-size:.68rem;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:center;min-height:32px;cursor:default;transition:transform .15s;position:relative}
+.hmc:hover{transform:scale(1.08);z-index:2}
+.hmh{font-size:.68rem;font-weight:600;color:var(--t2);display:flex;align-items:center;justify-content:center}
+.hmdl{font-size:.7rem;color:var(--t2);display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+
+/* ── TOP TABLE — Contrevenant ───────────────────────────────── */
+.top-tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.top-tbl th{font-family:'Lexend Deca',sans-serif;font-size:.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;cursor:pointer;user-select:none}
+.top-tbl th:hover{color:var(--t1)}
+.top-tbl td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--t1);vertical-align:middle}
+.top-tbl tr.alt td{background:rgba(0,83,126,.03)}
+.top-tbl tr:hover td{background:rgba(27,174,161,.06)}
+.mono{font-family:'DM Mono',monospace}
+.pill-type{font-size:.68rem;padding:2px 7px;border-radius:10px;font-family:'Lexend Deca',sans-serif}
+.pill-type.phys{background:rgba(227,37,107,.1);color:#c01250}
+.pill-type.mor{background:rgba(0,83,126,.1);color:var(--p1)}
+.bar-prog{height:3px;background:var(--card2);border-radius:2px;width:100px}
+.bar-fill{height:100%;background:var(--grad);border-radius:2px;transition:width .4s}
+
+/* ── DATA TABLE — Infraction ────────────────────────────────── */
+.twrp{overflow-x:auto;border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead th{background:var(--card2);padding:10px 14px;text-align:left;font-size:.72rem;font-weight:600;letter-spacing:.04em;color:var(--t2);text-transform:uppercase;cursor:pointer;white-space:nowrap;user-select:none}
+thead th:hover{color:var(--t1)}
+thead th.sa::after{content:' ▲'}
+thead th.sd::after{content:' ▼'}
+tbody tr{border-bottom:1px solid rgba(30,58,82,.5);transition:background .15s}
+tbody tr:nth-child(even){background:rgba(20,43,66,.4)}
+tbody tr:hover{background:rgba(0,83,126,.07)}
+td{padding:10px 14px;color:var(--t1)}
+.tn{font-family:'DM Mono',monospace;text-align:right}
+.tr2{font-family:'DM Mono',monospace;font-weight:600;text-align:right}
+.tr2.g{color:var(--green)}.tr2.o{color:var(--orange)}.tr2.r{color:var(--red)}
+.pb{height:3px;border-radius:2px;background:var(--border);margin-top:4px;overflow:hidden}
+.pf{height:100%;background:var(--grad);border-radius:2px;transition:width .3s}
+.rk{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:rgba(0,83,126,.15);color:var(--p1);font-size:.75rem;font-weight:600;font-family:'DM Mono',monospace}
+.tctl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.dsel,.nsel{background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:.8rem;color:var(--t1);font-family:'Inter',sans-serif;cursor:pointer;outline:none}
+.dsel:focus,.nsel:focus{border-color:var(--p1)}
+
+/* ── MISC ───────────────────────────────────────────────────── */
+.toggle-row{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--t2)}
+.toggle-row input{accent-color:var(--p1)}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media(max-width:1200px){.kg{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1000px){.kg{grid-template-columns:repeat(3,1fr)}.cr.c3,.cr.c2{grid-template-columns:1fr}}
+@media(max-width:700px){
+  #sidebar{position:fixed}
+  #main{margin-left:0!important}
+  #content,#cnt{padding:16px}
+  .kg{grid-template-columns:1fr 1fr}
+  #hdr{padding:0 16px}
+}
+@media(max-width:480px){.kg{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════════
+   RH Cadre 1030 — Tableau de bord du personnel · Avril 2026
+   Couvre : Cadre1030.html
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── SIDEBAR RH (#sb) ───────────────────────────────────────── */
+#sb{position:fixed;top:0;left:0;width:var(--sb-w);height:100vh;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:width var(--tr);overflow:hidden;z-index:100}
+#sb.collapsed{width:var(--sb-col)}
+#sb .sbh{padding:14px 12px;min-height:68px;height:auto;overflow:hidden}
+#sb .logo-area{flex:1;min-width:0}
+#sb .logo-txt{font-size:.85rem;transition:opacity 0.15s ease}
+#sb .sb-body{flex:1;overflow-y:auto;padding:12px 10px;display:flex;flex-direction:column;gap:10px}
+#sb.collapsed .sb-body{opacity:0;pointer-events:none}
+#sb.collapsed .logo-txt{opacity:0}
+.sb-toggle{background:none;border:none;color:var(--t2);cursor:pointer;font-size:1.2rem;padding:4px 6px;border-radius:6px;flex-shrink:0;transition:background var(--tr)}
+.sb-toggle:hover{background:var(--card2)}
+.sb-section-lbl{font-family:'Lexend Deca',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--p1);margin-bottom:4px}
+.sbf-ms{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--t1);border-radius:8px;padding:4px;font-size:.78rem;font-family:'Inter',sans-serif;outline:none;cursor:pointer}
+.sbf-ms option{padding:3px 4px}
+.slider-wrap{display:flex;flex-direction:column;gap:6px}
+.slider-row{display:flex;gap:6px;align-items:center}
+.slider-row input[type=range]{flex:1;accent-color:var(--p1)}
+.slider-val{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--p2);min-width:36px;text-align:center}
+.chips-area{display:flex;flex-wrap:wrap;gap:5px;min-height:4px}
+.sb-btn.reset{background:var(--card2);color:var(--t2);border:1px solid var(--border)}
+.sb-btn.reset:hover{background:var(--card)}
+.sb-btn.export{background:var(--p1);color:#fff;margin-top:4px;border:none}
+.sb-btn.export:hover{background:var(--p2)}
+
+/* ── HEADER RH ──────────────────────────────────────────────── */
+#sb~#hdr{position:fixed;top:0;left:var(--sb-w);right:0;height:68px;background:var(--card);border-bottom:2px solid var(--p1);display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:16px;z-index:90;transition:left var(--tr)}
+#sb.collapsed~#hdr{left:var(--sb-col)}
+
+/* ── MAIN RH ────────────────────────────────────────────────── */
+#sb~#main{margin-left:var(--sb-w);margin-top:68px;padding:16px 20px;transition:margin-left var(--tr);min-height:calc(100vh - 68px);flex:none;display:block}
+#sb.collapsed~#main{margin-left:var(--sb-col)}
+
+/* ── KPI GRID RH (5 colonnes) ───────────────────────────────── */
+#sb~#main .kg{grid-template-columns:repeat(5,1fr)}
+#sb~#main .kc{box-shadow:0 2px 8px rgba(0,83,126,.08)}
+#sb~#main .kc::before{display:none}
+.kc-top{height:2px;border-radius:2px;margin-bottom:10px}
+.kc-row{display:flex;align-items:flex-start;justify-content:space-between}
+.kc-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.kc-ico.tl{background:rgba(27,174,161,.15)}
+.kc-ico.pk{background:rgba(227,37,107,.12)}
+.kc-ico.gr{background:rgba(162,196,38,.12)}
+.kc-ico.yw{background:rgba(253,194,0,.12)}
+.kc-ico.or{background:rgba(238,121,55,.12)}
+.kc-ico.rs{background:rgba(207,122,135,.12)}
+#sb~#main .kbdg.up{background:rgba(27,174,161,.15);color:#1baea1}
+#sb~#main .kbdg.dn{background:rgba(227,37,107,.12);color:#e3256b}
+.kc-lbl{font-family:'Lexend Deca',sans-serif;font-size:.72rem;font-weight:700;color:var(--p1);margin-top:8px;text-transform:uppercase;letter-spacing:.04em}
+.kc-val{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--t1);margin-top:2px}
+.kc-sub{font-size:.7rem;color:var(--t3);margin-top:1px}
+.kpbar{height:3px;background:var(--card2);border-radius:2px;margin-top:8px}
+.kpbar-fill{height:3px;border-radius:2px;background:var(--grad)}
+#sb~#main .knote{font-size:.7rem;color:var(--t3);margin:2px 0 14px 2px}
+
+/* ── CHART GRID RH ──────────────────────────────────────────── */
+.chart-grid{display:grid;gap:14px;margin-bottom:14px}
+.cg-full{grid-template-columns:1fr}
+.cg-thirds{grid-template-columns:repeat(3,1fr)}
+.cg-fourths{grid-template-columns:repeat(4,1fr)}
+.cg-halves{grid-template-columns:1fr 1fr}
+.cg-4col{grid-template-columns:repeat(4,1fr)}
+.cg-4col .span2{grid-column:span 2}
+#sb~#main .card{padding:16px}
+.card-badge{font-size:.7rem;color:var(--t3);font-family:'DM Mono',monospace}
+#sb~#main .dl-btn{background:none;border-color:var(--border);color:var(--t3)}
+#sb~#main .dl-btn:hover{color:var(--p1);border-color:var(--p1)}
+.dir-sel{background:var(--card2);border:1px solid var(--border);color:var(--t2);font-size:.72rem;padding:3px 8px;border-radius:6px;font-family:'Lexend Deca',sans-serif;font-weight:600;cursor:pointer;outline:none;max-width:180px;transition:all var(--tr)}
+.dir-sel:hover,.dir-sel:focus{border-color:var(--p1);color:var(--p1)}
+.dir-sel.filtered{border-color:var(--p1);background:rgba(0,83,126,.1);color:var(--p1);box-shadow:0 0 0 2px rgba(0,83,126,.15)}
+#sb~#main .donut-wrap{width:220px;height:220px;margin:0 auto}
+#sb~#main .pill{font-family:'Lexend Deca',sans-serif;font-weight:600;font-size:.72rem;padding:3px 10px}
+#sb~#main .pill.active{background:var(--p1);border-color:var(--p1);color:#fff}
+
+/* ── HEATMAP RH (#g11 grid) ─────────────────────────────────── */
+.heatmap-wrap{overflow-x:auto;margin-top:4px}
+#g11{display:grid;grid-template-columns:180px repeat(8,1fr);gap:3px;min-width:720px}
+#g11 .hmc{border-radius:5px;padding:6px 4px;text-align:center;font-size:.75rem;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:center;min-height:36px;cursor:default;transition:transform .15s;position:relative}
+#g11 .hmc:hover{transform:scale(1.05);z-index:2}
+#g11 .hmh{font-size:.72rem;font-weight:600;color:var(--t2);font-family:'Lexend Deca',sans-serif;letter-spacing:.04em;background:transparent}
+#g11 .hmdl{justify-content:flex-start;padding:4px 4px 4px 6px;font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:36px;min-height:36px;color:var(--t2)}
+
+/* ── TOP-N TABLE RH (.topn-table) ───────────────────────────── */
+.topn-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.topn-table th{font-family:'Lexend Deca',sans-serif;font-size:.72rem;font-weight:700;color:var(--p1);text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:2px solid var(--border);text-align:left;cursor:pointer;user-select:none;white-space:nowrap}
+.topn-table th:hover{color:var(--p2)}
+.topn-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--t1);vertical-align:middle}
+.topn-table tr:last-child td{border-bottom:none}
+.topn-table tr:hover td{background:rgba(27,174,161,.06)}
+.topn-table tr:nth-child(even) td{background:rgba(0,83,126,.03)}
+.tpbar{height:3px;background:var(--card2);border-radius:2px;margin-top:4px;min-width:50px}
+.tpbar-fill{height:3px;border-radius:2px;background:var(--grad)}
+.rank-badge{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--card2);text-align:center;line-height:22px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--t2)}
+.rank-badge.r1{background:rgba(253,194,0,.25);color:#a07800}
+.rank-badge.r2{background:rgba(160,160,160,.15);color:var(--t2)}
+.rank-badge.r3{background:rgba(238,121,55,.2);color:#b85000}
+.topn-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* ── RESPONSIVE RH ──────────────────────────────────────────── */
+@media(max-width:1199px){.cg-fourths,.cg-4col{grid-template-columns:repeat(2,1fr)}.cg-4col .span2{grid-column:span 1!important}}
+@media(max-width:999px){.cg-thirds,.cg-halves,.cg-fourths,.cg-4col{grid-template-columns:1fr}.cg-4col .span2{grid-column:span 1!important}}
+@media(max-width:699px){#sb~#main{margin-left:0!important}}
+
+/* ═══════════════════════════════════════════════════════════════
+   Cycloparking 1030 — Demandes Cycloparking · Juin 2026
+   Couvre : Cycloparking 1030/dispositif_demandes.html
+   ═══════════════════════════════════════════════════════════════ */
+
+/* KPI 6 colonnes */
+#sb~#main .kg{grid-template-columns:repeat(6,1fr)}
+
+/* Header logo */
+#sb~#hdr .hdr-logo{height:46px}
+
+/* Heatmap G7 : Quartier × Type de demande (13 lignes × 5 colonnes) */
+#g7{display:grid;grid-template-columns:170px repeat(5,1fr);gap:3px;min-width:600px}
+#g7 .hmc{border-radius:5px;padding:6px 4px;font-size:.75rem;font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:center;min-height:36px;cursor:default;transition:transform .15s}
+#g7 .hmc:hover{transform:scale(1.05);z-index:2}
+#g7 .hmh{font-size:.72rem;font-weight:600;color:var(--t2);font-family:'Lexend Deca',sans-serif;letter-spacing:.04em;background:transparent}
+#g7 .hmdl{justify-content:flex-start;padding:4px 8px;font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t2);display:block;line-height:36px;min-height:36px}
+
+/* Couverture badges */
+.couv-badge{font-family:'Lexend Deca',sans-serif;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.badge-green{background:rgba(27,174,161,.15);color:#1BAEA1}
+.badge-yellow{background:rgba(253,194,0,.2);color:#a07800}
+.badge-red{background:rgba(227,37,107,.15);color:#E3256B}
+
+/* Donuts grandes centrados — secciones cycloparking + dispositifs */
+#sb~#main .donut-lg{width:250px;height:250px;margin:auto}
+#sb~#main .card-donut{display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* Séparateurs de section dans #main */
+.dash-section-hdr{display:flex;align-items:center;gap:10px;margin:28px 0 14px;padding:10px 16px;background:var(--card2);border-left:4px solid var(--p1);border-radius:0 8px 8px 0}
+.dash-section-ico{font-size:1.1rem;line-height:1;opacity:.85}
+.dash-section-hdr>span:not(.dash-section-ico){font-family:'Lexend Deca',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--p1);white-space:nowrap}
+.dash-section-line{flex:1;height:1px;background:var(--border);border-radius:1px;opacity:.5}
+
+/* Tooltip custom KPI cards */
+.kc[data-tip]{position:relative;overflow:visible}
+.kc[data-tip]::after{
+  content:attr(data-tip);
+  position:absolute;
+  top:calc(100% + 8px);
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--card2);
+  border:1px solid var(--border);
+  color:var(--t1);
+  font-family:'Inter',sans-serif;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:8px 10px;
+  border-radius:8px;
+  width:220px;
+  text-align:center;
+  white-space:normal;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .2s;
+  z-index:999;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+.kc[data-tip]:hover::after{opacity:1}
+
+/* Tooltip icône ⓘ — graphiques */
+.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--t2);font-size:.65rem;font-style:normal;cursor:default;position:relative;margin-left:5px;flex-shrink:0;overflow:visible;vertical-align:middle;user-select:none}
+.tip-icon::after{
+  content:attr(data-tip);
+  position:absolute;
+  top:calc(100% + 8px);
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--card2);
+  border:1px solid var(--border);
+  color:var(--t1);
+  font-family:'Inter',sans-serif;
+  font-size:.72rem;
+  line-height:1.5;
+  padding:8px 10px;
+  border-radius:8px;
+  width:240px;
+  text-align:center;
+  white-space:normal;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .2s;
+  z-index:1000;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+.tip-icon:hover::after{opacity:1}
+
+/* Responsive Cycloparking 1030 */
+@media(max-width:1399px){#sb~#main .kg{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:699px){#sb~#main .kg{grid-template-columns:repeat(2,1fr)}}

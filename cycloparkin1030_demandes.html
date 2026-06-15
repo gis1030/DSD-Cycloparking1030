@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demandes Cycloparking — Dashboard GIS1030</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Lexend+Deca:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles1030.css">
+</head>
+<body class="light">
+
+<!-- ═══════════════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════════════ -->
+<nav id="sb">
+  <div class="sbh">
+    <div class="logo-area">
+      <img src="images/1030_Icon.png" class="logo-icon" alt="1030">
+      <span class="logo-txt">Cycloparking 1030</span>
+    </div>
+    <button class="sb-toggle" id="sbToggle" onclick="toggleSB()">☰</button>
+  </div>
+
+  <div class="sb-body" id="sbBody">
+
+    <div>
+      <div class="sb-section-lbl">🏘️ Quartier</div>
+      <div class="sbf">
+        <select id="fQtier" class="sbf-ms" onchange="applyFilters()">
+          <option value="">Tous les quartiers</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <div class="sb-section-lbl">🗂️ Type de demande</div>
+      <div class="sbf" id="fTypeWrap"></div>
+    </div>
+
+    <div>
+      <div class="sb-section-lbl">🔐 Couverture cycloparking</div>
+      <div class="sbf" id="fCouvrWrap"></div>
+    </div>
+
+    <div>
+      <div class="sb-section-lbl">🏛️ Type de dispositif</div>
+      <div class="sbf" id="fDispWrap"></div>
+    </div>
+
+    <div>
+      <div class="sb-section-lbl">⚙️ Situation dispositif</div>
+      <div class="sbf">
+        <select id="fSit" class="sbf-ms" onchange="applyFilters()">
+          <option value="">Toutes situations</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <div class="sb-section-lbl">📅 Année de demande</div>
+      <div class="sbf slider-wrap">
+        <div class="slider-row">
+          <span style="font-size:.7rem;color:var(--t3);min-width:20px">De</span>
+          <input type="range" id="slMin" min="2017" max="2026" value="2017" oninput="sliderInput()">
+          <span class="slider-val" id="slMinV">2017</span>
+        </div>
+        <div class="slider-row">
+          <span style="font-size:.7rem;color:var(--t3);min-width:20px">À</span>
+          <input type="range" id="slMax" min="2017" max="2026" value="2026" oninput="sliderInput()">
+          <span class="slider-val" id="slMaxV">2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chips-area" id="chipsArea"></div>
+    <button class="sb-btn reset"  onclick="resetFilters()">↺ Réinitialiser</button>
+    <a href="indexFR.html" class="sb-btn reset" style="display:block;text-decoration:none;text-align:center;">Cartographie</a>
+    <button class="sb-btn export" onclick="exportCSV()">⬇ Exporter CSV filtré</button>
+
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════════ -->
+<header id="hdr">
+  <div class="hdl">
+    <img src="images/schaerbeek1030_logo.png" class="hdr-logo" alt="1030 Schaerbeek">
+    <div class="hdtt">
+      <div class="hdt">Demandes de stationnement vélo (2017-2026)</div>
+      <div class="hds">Juin 2026 · Projet Cycloparking 1030 · DSD Schaerbeek</div>
+    </div>
+  </div>
+  <div class="hdr2">
+    <div id="hdrBadge">— enregistrements</div>
+    <button class="thbtn" id="themeBtn" onclick="toggleTheme()">☀️</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN
+     ═══════════════════════════════════════════════ -->
+<main id="main">
+
+  <!-- ── KPI CARDS (6) ── -->
+  <div class="kg" style="margin-top:6px;margin-bottom:14px">
+    <div class="kc" data-tip="Total des demandes de stationnement vélo après filtres.">
+      <div class="kc-top" style="background:#1BAEA1"></div>
+      <div class="kc-row">
+        <div class="kc-ico tl">🚲</div>
+        <div class="kbdgs"></div>
+      </div>
+      <div class="kc-lbl">Total demandes</div>
+      <div class="kc-val" id="kv0">—</div>
+      <div class="kc-sub" id="ks0">filtrées</div>
+    </div>
+    <div class="kc" data-tip="Cycloparkings gérés (abonnement sécurisé) en service.">
+      <div class="kc-top" style="background:#A2C426"></div>
+      <div class="kc-row">
+        <div class="kc-ico gr">🅿️</div>
+        <div class="kbdgs"></div>
+      </div>
+      <div class="kc-lbl">Cycloparkings actifs</div>
+      <div class="kc-val" id="kv1">—</div>
+      <div class="kc-sub" id="ks1">en service</div>
+    </div>
+    <div class="kc" data-tip="Arceaux, box vélo et groupes d'arceaux publics à proximité des demandes.">
+      <div class="kc-top" style="background:#EE7937"></div>
+      <div class="kc-row">
+        <div class="kc-ico or">🏛️</div>
+        <div class="kbdgs"></div>
+      </div>
+      <div class="kc-lbl">Dispositifs publics</div>
+      <div class="kc-val" id="kv2">—</div>
+      <div class="kc-sub" id="ks2">arceaux, box, etc.</div>
+    </div>
+    <div class="kc" data-tip="Occupation moyenne des dispositifs proches. > 80% = saturé.">
+      <div class="kc-top" style="background:#FDC200"></div>
+      <div class="kc-row">
+        <div class="kc-ico yw">📊</div>
+        <div class="kbdgs"></div>
+      </div>
+      <div class="kc-lbl">Taux d'occupation moy.</div>
+      <div class="kc-val" id="kv3">—</div>
+      <div class="kc-sub" id="ks3">&gt;80% = saturé</div>
+    </div>
+    <div class="kc" data-tip="Sans cycloparking géré, mais avec arceaux proches. Priorité : convertir en cycloparking géré.">
+      <div class="kc-top" style="background:#CF7A87"></div>
+      <div class="kc-row">
+        <div class="kc-ico rs">🎯</div>
+        <div class="kbdgs"></div>
+      </div>
+      <div class="kc-lbl">Candidats conversion</div>
+      <div class="kc-val" id="kv4">—</div>
+      <div class="kc-sub" id="ks4">arceaux → cycloparking</div>
+    </div>
+    <div class="kc" data-tip="Aucune infrastructure vélo à proximité. Urgence maximale : tout est à créer.">
+      <div class="kc-top" style="background:#E3256B"></div>
+      <div class="kc-row">
+        <div class="kc-ico pk">🚨</div>
+        <div class="kbdgs"></div>
+      </div>
+      <div class="kc-lbl">Déficit total</div>
+      <div class="kc-val" id="kv5">—</div>
+      <div class="kc-sub" id="ks5">aucune infrastructure</div>
+    </div>
+  </div>
+
+  <!-- ── G1 + G2 — Quartier ── -->
+  <div class="chart-grid cg-halves">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Demandes par Quartier<i class="tip-icon" data-tip="Nombre total de demandes de stationnement vélo par quartier. Identifie les zones les plus demandeuses pour prioriser les implantations.">ⓘ</i></div>
+        <button class="dl-btn" onclick="dlChart('g1')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:360px"><canvas id="g1"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Couverture Cycloparking par Quartier<i class="tip-icon" data-tip="Répartition des demandes selon la couverture cycloparking existante dans chaque quartier : bien couvert, moyen ou déficitaire.">ⓘ</i></div>
+        <button class="dl-btn" onclick="dlChart('g2')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:360px"><canvas id="g2"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── G3 + G8 — Évolution annuelle + Distance ── -->
+  <div class="chart-grid cg-halves">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Évolution annuelle des demandes<i class="tip-icon" data-tip="Tendance du nombre de demandes reçues chaque année. Permet de mesurer la croissance de la demande citoyenne au fil du temps.">ⓘ</i></div>
+        <select id="g3Qtier" class="dir-sel" onchange="renderG3()">
+          <option value="">Tous les quartiers</option>
+        </select>
+        <button class="dl-btn" onclick="dlChart('g3')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:360px"><canvas id="g3"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Distance → Cycloparking<i class="tip-icon" data-tip="Distribution des distances entre les citoyens demandeurs et le cycloparking géré le plus proche. Une distance élevée signale un manque de couverture locale.">ⓘ</i></div>
+        <select id="g8Qtier" class="dir-sel" onchange="renderG8()">
+          <option value="">Tous les quartiers</option>
+        </select>
+        <button class="dl-btn" onclick="dlChart('g8')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:360px"><canvas id="g8"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── G4 — 4 Donuts type de demande ── -->
+  <div class="chart-grid cg-4col">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Domicile Classique<i class="tip-icon" data-tip="Demandes de parking vélo standard à proximité du domicile. Le type le plus fréquent.">ⓘ</i></div></div>
+      <div class="donut-wrap"><canvas id="g4a"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">POI Classique<i class="tip-icon" data-tip="Demandes de parking vélo standard près d'un point d'intérêt (commerce, école, bureau…). Reflète la mobilité quotidienne.">ⓘ</i></div></div>
+      <div class="donut-wrap"><canvas id="g4b"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Domicile Cargo<i class="tip-icon" data-tip="Demandes de stationnement pour vélo cargo au domicile. Nécessite des espaces plus grands — priorité pour les nouvelles infrastructures.">ⓘ</i></div></div>
+      <div class="donut-wrap"><canvas id="g4c"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">POI Cargo<i class="tip-icon" data-tip="Demandes de stationnement cargo près d'un point d'intérêt. Indique les zones commerçantes ou logistiques à équiper en priorité.">ⓘ</i></div></div>
+      <div class="donut-wrap"><canvas id="g4d"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── G5 + G6 — Évolution / Candidats ── -->
+  <div class="chart-grid cg-halves">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Évolution par type de demande<i class="tip-icon" data-tip="Évolution annuelle par type de demande (domicile / POI, classique / cargo). Identifie quels usages progressent le plus rapidement.">ⓘ</i></div>
+        <select id="g5Qtier" class="dir-sel" onchange="renderG5()">
+          <option value="">Tous les quartiers</option>
+        </select>
+        <button class="dl-btn" onclick="dlChart('g5')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:360px"><canvas id="g5"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Candidats conversion vs Déficit total<i class="tip-icon" data-tip="Candidats à conversion : zones sans cycloparking géré mais avec arceaux proches — à transformer en priorité. Déficit total : aucune infrastructure, tout est à créer.">ⓘ</i></div>
+        <button class="dl-btn" onclick="dlChart('g6')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:360px"><canvas id="g6"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── G7 — Heatmap Quartier × Type ── -->
+  <div class="chart-grid cg-full">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Heatmap — Quartier × Type de demande<i class="tip-icon" data-tip="Vue croisée du nombre de demandes par quartier et par type. Les cellules plus foncées indiquent les combinaisons les plus sollicitées — cibles prioritaires pour les nouvelles infrastructures.">ⓘ</i></div>
+      </div>
+      <div class="heatmap-wrap"><div id="g7"></div></div>
+    </div>
+  </div>
+
+  <!-- ── G9 + G10 ── -->
+  <div class="chart-grid cg-halves" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Top Rues<i class="tip-icon" data-tip="Les rues de Schaerbeek concentrant le plus de demandes de stationnement vélo. Priorités géographiques directes pour l'implantation de nouveaux parkings.">ⓘ</i></div>
+        <div class="pills" id="g9pills">
+          <span class="pill active" data-n="10" onclick="renderG9(10)">10</span>
+          <span class="pill" data-n="20" onclick="renderG9(20)">20</span>
+          <span class="pill" data-n="30" onclick="renderG9(30)">30</span>
+        </div>
+      </div>
+      <div id="g9tbl"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Top BlockParcelles<i class="tip-icon" data-tip="Les îlots cadastraux (BlockParcelle) concentrant le plus de demandes. Granularité fine pour cibler les interventions à l'échelle du bâtiment ou du pâté de maisons.">ⓘ</i></div>
+        <div class="pills" id="g10pills">
+          <span class="pill active" data-n="10" onclick="renderG10(10)">10</span>
+          <span class="pill" data-n="20" onclick="renderG10(20)">20</span>
+          <span class="pill" data-n="30" onclick="renderG10(30)">30</span>
+        </div>
+      </div>
+      <div id="g10tbl"></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION — CYCLOPARKINGS GÉRÉS
+       ══════════════════════════════════════════════════════ -->
+  <div class="dash-section-hdr">
+    <span class="dash-section-ico">🅿️</span>
+    <span>Cycloparkings gérés</span>
+    <div class="dash-section-line"></div>
+  </div>
+
+  <!-- KPIs Cycloparking -->
+  <div class="kg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+    <div class="kc" data-tip="Nombre de cycloparkings gérés uniques référencés dans les demandes filtrées.">
+      <div class="kc-top" style="background:#1BAEA1"></div>
+      <div class="kc-row"><div class="kc-ico tl">🅿️</div></div>
+      <div class="kc-lbl">Cycloparkings</div>
+      <div class="kc-val" id="kc1v">—</div>
+      <div class="kc-sub">uniques</div>
+    </div>
+    <div class="kc" data-tip="Total des places de stationnement vélo classique disponibles dans les cycloparkings gérés référencés.">
+      <div class="kc-top" style="background:#A2C426"></div>
+      <div class="kc-row"><div class="kc-ico gr">🚲</div></div>
+      <div class="kc-lbl">Places classiques</div>
+      <div class="kc-val" id="kc2v">—</div>
+      <div class="kc-sub">capacité totale</div>
+    </div>
+    <div class="kc" data-tip="Total des places dédiées aux vélos cargo dans les cycloparkings gérés. Très peu disponibles à Schaerbeek — besoin d'extension.">
+      <div class="kc-top" style="background:#EE7937"></div>
+      <div class="kc-row"><div class="kc-ico or">📦</div></div>
+      <div class="kc-lbl">Places cargo</div>
+      <div class="kc-val" id="kc3v">—</div>
+      <div class="kc-sub">capacité totale</div>
+    </div>
+  </div>
+
+  <!-- GC1 + GC2 + GC3 -->
+  <div class="chart-grid cg-thirds">
+    <div class="card card-donut">
+      <div class="card-hdr">
+        <div class="card-title">Statut<i class="tip-icon" data-tip="Répartition des demandes selon que le cycloparking géré le plus proche est en service ou hors service.">ⓘ</i></div>
+      </div>
+      <div class="donut-wrap donut-lg"><canvas id="gc1"></canvas></div>
+    </div>
+    <div class="card card-donut">
+      <div class="card-hdr">
+        <div class="card-title">Type de cycloparking<i class="tip-icon" data-tip="Type du cycloparking géré le plus proche : box individuel sécurisé ou parking de quartier collectif en abonnement.">ⓘ</i></div>
+      </div>
+      <div class="donut-wrap donut-lg"><canvas id="gc2"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Statut par Quartier<i class="tip-icon" data-tip="Par quartier, demandes selon le statut du cycloparking le plus proche. Les zones à forte présence 'Hors service' sont prioritaires pour remise en service.">ⓘ</i></div>
+        <button class="dl-btn" onclick="dlChart('gc3')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:300px"><canvas id="gc3"></canvas></div>
+    </div>
+  </div>
+
+  <!-- GC4 — Top cycloparkings -->
+  <div class="chart-grid cg-full" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Top cycloparkings les plus sollicités<i class="tip-icon" data-tip="Cycloparkings gérés qui concentrent le plus de demandes dans leur voisinage immédiat. Indique quelles installations sont sous la plus forte pression de demande.">ⓘ</i></div>
+        <div class="pills" id="gc4pills">
+          <span class="pill active" data-n="10" onclick="renderGC4(10)">10</span>
+          <span class="pill" data-n="20" onclick="renderGC4(20)">20</span>
+          <span class="pill" data-n="30" onclick="renderGC4(30)">30</span>
+        </div>
+      </div>
+      <div id="gc4tbl"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       SECTION — DISPOSITIFS PUBLICS
+       ══════════════════════════════════════════════════════ -->
+  <div class="dash-section-hdr">
+    <span class="dash-section-ico">🏛️</span>
+    <span>Dispositifs publics</span>
+    <div class="dash-section-line"></div>
+  </div>
+
+  <!-- KPIs Dispositifs -->
+  <div class="kg" style="grid-template-columns:repeat(5,1fr);margin-bottom:14px">
+    <div class="kc" data-tip="Nombre de dispositifs publics de stationnement vélo uniques référencés dans les demandes filtrées.">
+      <div class="kc-top" style="background:#1BAEA1"></div>
+      <div class="kc-row"><div class="kc-ico tl">🏛️</div></div>
+      <div class="kc-lbl">Dispositifs</div>
+      <div class="kc-val" id="kd1v">—</div>
+      <div class="kc-sub">uniques</div>
+    </div>
+    <div class="kc" data-tip="Nombre total de places de stationnement disponibles dans l'ensemble des dispositifs publics référencés.">
+      <div class="kc-top" style="background:#A2C426"></div>
+      <div class="kc-row"><div class="kc-ico gr">📐</div></div>
+      <div class="kc-lbl">Capacité totale</div>
+      <div class="kc-val" id="kd2v">—</div>
+      <div class="kc-sub">places</div>
+    </div>
+    <div class="kc" data-tip="Nombre de vélos classiques actuellement stationnés dans les dispositifs publics proches des demandes.">
+      <div class="kc-top" style="background:#FDC200"></div>
+      <div class="kc-row"><div class="kc-ico yw">🚲</div></div>
+      <div class="kc-lbl">Vélos stationnés</div>
+      <div class="kc-val" id="kd3v">—</div>
+      <div class="kc-sub">nb_velo</div>
+    </div>
+    <div class="kc" data-tip="Nombre de vélos cargo actuellement stationnés dans les dispositifs publics. Indique la demande réelle en places cargo.">
+      <div class="kc-top" style="background:#EE7937"></div>
+      <div class="kc-row"><div class="kc-ico or">📦</div></div>
+      <div class="kc-lbl">Cargo stationnés</div>
+      <div class="kc-val" id="kd4v">—</div>
+      <div class="kc-sub">nb_cargo</div>
+    </div>
+    <div class="kc" data-tip="Dispositifs dont le taux d'occupation dépasse 100 % — plus de vélos que de places disponibles. Priorité d'intervention immédiate.">
+      <div class="kc-top" style="background:#E3256B"></div>
+      <div class="kc-row"><div class="kc-ico pk">🚨</div></div>
+      <div class="kc-lbl">Saturés</div>
+      <div class="kc-val" id="kd5v">—</div>
+      <div class="kc-sub">occupation &gt; 100 %</div>
+    </div>
+  </div>
+
+  <!-- GD1 + GD2 + GD3 + GD4 -->
+  <div class="chart-grid cg-4col">
+    <div class="card card-donut">
+      <div class="card-hdr"><div class="card-title">Type<i class="tip-icon" data-tip="Type d'infrastructure de stationnement vélo public proche : arceau isolé, box vélo individuel ou groupe d'arceaux.">ⓘ</i></div></div>
+      <div class="donut-wrap donut-lg"><canvas id="gd1"></canvas></div>
+    </div>
+    <div class="card card-donut">
+      <div class="card-hdr"><div class="card-title">État<i class="tip-icon" data-tip="État physique du dispositif public le plus proche. Un état dégradé réduit l'attractivité et la sécurité du stationnement.">ⓘ</i></div></div>
+      <div class="donut-wrap donut-lg"><canvas id="gd2"></canvas></div>
+    </div>
+    <div class="card card-donut">
+      <div class="card-hdr"><div class="card-title">Abri météo<i class="tip-icon" data-tip="Le dispositif proche dispose-t-il d'une couverture (abri) ? Un abri protège le vélo des intempéries et améliore le confort d'usage.">ⓘ</i></div></div>
+      <div class="donut-wrap donut-lg"><canvas id="gd3"></canvas></div>
+    </div>
+    <div class="card card-donut">
+      <div class="card-hdr"><div class="card-title">Opérateur<i class="tip-icon" data-tip="Gestionnaire du dispositif public proche : opérateur public (commune/région) ou privé (résidence, commerce, école).">ⓘ</i></div></div>
+      <div class="donut-wrap donut-lg"><canvas id="gd4"></canvas></div>
+    </div>
+  </div>
+
+  <!-- GD5 + GD6 -->
+  <div class="chart-grid cg-halves" style="margin-bottom:30px">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Taux d'occupation<i class="tip-icon" data-tip="Distribution des taux d'occupation des dispositifs publics proches. Au-delà de 100 % les vélos dépassent les places disponibles — signal de saturation.">ⓘ</i></div>
+        <select id="gd5Qtier" class="dir-sel" onchange="renderGD5()">
+          <option value="">Tous les quartiers</option>
+        </select>
+        <button class="dl-btn" onclick="dlChart('gd5')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:320px"><canvas id="gd5"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Situation géographique<i class="tip-icon" data-tip="Emplacement des dispositifs publics proches dans l'espace urbain : en voirie, sur trottoir, sur place publique, etc.">ⓘ</i></div>
+        <select id="gd6Qtier" class="dir-sel" onchange="renderGD6()">
+          <option value="">Tous les quartiers</option>
+        </select>
+        <button class="dl-btn" onclick="dlChart('gd6')">⬇ PNG</button>
+      </div>
+      <div class="chart-wrap" style="height:320px"><canvas id="gd6"></canvas></div>
+    </div>
+  </div>
+
+</main>
+
+<script src="js/chart.umd.min.js"></script>
+<script src="data/dispositif_demandes_20260611151427.js"></script>
+<script src="js/dashboard_common.js"></script>
+<script src="js/dashboard_shadowbroker.js"></script>
+</body>
+</html>
